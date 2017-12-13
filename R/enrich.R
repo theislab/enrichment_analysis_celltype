@@ -10,9 +10,16 @@ enrich <- function(clusters,
   cat(paste("Annotation database selected:",annoDB,'\n'))
   
   cat('Loading cell type signatures annotation file \n')
-  # After cloning the git repo it should be saved in the working directory
-  load(file = './enrich/Data/adj_mat.RData')
-
+  # After cloning the git repository it should be saved in the working directory
+  # load(file = './enrich/data/adj_mat.RData')
+  load(file = 'E:/cell-type enrichment analysis/adj_matv2.RData')
+  
+  if (annoDB == "xCell") {
+    adj.mat <- adj.mat[,c(1:489)]
+  } else {
+    adj.mat <- adj.mat[,c(490:510)]
+  }
+  
   # Initializing list object, adding metadata and results from Fisher's test
   enrich_object <- list()
   enrich_object$annotation_adj_matrix <- adj.mat
@@ -49,7 +56,7 @@ enrich <- function(clusters,
       # Performing Fisher's test
       res <- fisher.test(x = cont_tbl, alternative = 'greater')
 
-      # Saving p.value, odds ratio, common genes between cluster markers 
+      # Saving p-value, odds ratio, common genes between cluster markers 
       # and celltype signature, cluster ID, no. of genes in annotation and
       # no. of markers in cluster
       vec <- c(res$p.value, 
@@ -63,12 +70,12 @@ enrich <- function(clusters,
       
     })
     
-    matrix_fisher <- rbind(matrix_fisher,t(v))
+    matrix_fisher <- rbind(matrix_fisher,cbind(rownames(t(v)),data.frame(t(v), row.names=NULL)))
     
   }
-  colnames(matrix_fisher) <- c('p.value', 'estimate.of.odds.ratio', 'present.annotation', 
+  colnames(matrix_fisher) <- c('annotation','p.value', 'estimate.of.odds.ratio', 'present.annotation', 
                                'present.cluster', 'genes.in.intersection', 'cluster.ID')
-  
+  # saving significant enrichments for display and plotting
   significant_fisher <- data.frame()
   
     for(i in unique(matrix_fisher$cluster.ID)){
@@ -76,7 +83,7 @@ enrich <- function(clusters,
       matrix_fisher_sub <- matrix_fisher[which(matrix_fisher$cluster.ID == i),]
       matrix_fisher_sub$p.value <- sapply(matrix_fisher_sub$p.value, as.vector)
       matrix_fisher_sub$p.value <- as.vector(sapply(matrix_fisher_sub$p.value, as.numeric))
-      # Saving top 3 enriched pathways
+      # saving top 3 enriched cell-types
       temp <- matrix_fisher_sub[order(matrix_fisher_sub$p.value, decreasing = FALSE),][c(1:3),]
       significant_fisher <- rbind.data.frame(significant_fisher, temp)
     }
@@ -86,20 +93,21 @@ enrich <- function(clusters,
   enrich_object$matrix_fisher <- matrix_fisher
   enrich_object$significant_fisher <- significant_fisher
 
+  # plotting top 3 enriched cell-types for clusters
   if(plot == TRUE){
     
-    g <- ggplot(significant_fisher, 
-            aes(x = cluster.ID, y = -log10(p.value), fill = as.factor(rank))) + 
-    geom_bar(stat = 'identity', colour = "black", position = position_dodge(width = 0.8),
-             width = 0.5) + 
-    coord_flip() + 
-    geom_text(aes(label = rownames(significant_fisher)), size = 2, 
-              position = position_dodge(width = 0.8), hjust = -0.25) + 
-    ggtitle("Most significantly enriched cluster cell-type from Fisher's exact test") + 
-    theme(plot.title = element_text(hjust = 0.5))
-  
-  print(g)
+    g <- ggplot(significant_fisher, aes(x = cluster.ID, y = -log10(p.value), fill = as.factor(rank))) + 
+      geom_bar(stat = 'identity', position = position_dodge(width = 0.8), width = 0.5) + 
+      coord_flip() + 
+      geom_text(aes(label = significant_fisher$annotation), size = 2, position = position_dodge(width = 0.8), hjust = -0.1) + 
+      ggtitle("Top 3 significantly enriched cluster cell-type from Fisher's exact test") + 
+      theme(plot.title = element_text(hjust = 0.5)) + 
+      guides(fill=guide_legend(title="rank")) + 
+      # reverse the order of cluster IDs to display from 0 (top) till n (bottom)
+      scale_x_discrete(limits = rev(levels(significant_fisher$cluster.ID)))
+    print(g)
   }
+  
   return(enrich_object)
 
 }

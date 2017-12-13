@@ -1,11 +1,42 @@
 # The below script updates the adjacency matrix
-# file - path of the file from which the cell-type annotations are to be read in. The first column
-# should correspond to the cell-type (source) ID
+# file - path of the file from which the cell-type annotations are to be read in
 
 make_adjacency_matrix <- function(file){
   
   require(xlsx)
   
+  # setwd('C:/Users/user/')
+  
+  load(file = './enrich/data/adj_mat.RData')
+  
+  # updating the adjacency matrix with brain anatomy related annotations
+  brain_anno_anatomical <- as.matrix(read.csv("E:/cell-type enrichment analysis/nn.4171-S13.csv", 
+                                    header = TRUE, row.names = 1))
+  
+  dim(adj.mat) # 5079X489
+  
+  for(i in 1:ncol(brain_anno_anatomical)){
+    
+    topGenes <- head(sort(brain_anno_anatomical[,i], decreasing = TRUE), 100)
+    genestoadd <- setdiff(names(topGenes),rownames(adj.mat))
+    temp <- matrix(data = 0, nrow = length(genestoadd), ncol = ncol(adj.mat))
+    rownames(temp) <- genestoadd
+    adj.mat <- rbind(adj.mat,temp)
+    temp <- matrix(data = 0, nrow = nrow(adj.mat),ncol = 1)
+    colnames(temp) <- colnames(brain_anno_anatomical)[i]
+    adj.mat <- cbind(adj.mat,temp)
+    
+    adj.mat[which(rownames(adj.mat) %in% names(topGenes)),ncol(adj.mat)] = 1
+    
+  }
+  
+  dim(adj.mat) # 5927X510
+  
+  write.csv(adj.mat,file = 'E:/cell-type enrichment analysis/adjacency matrix with xCell and brain annotations.csv')
+  save(adj.mat,file = 'E:/cell-type enrichment analysis/adj_matv2.RData')
+  
+  # constructing the first adjacency matrix with xCell
+  # file contains the path for the cell-type annotations for excel
   annoData <- read.xlsx(file, sheetIndex = 1)
   annoData = sapply(annoData, as.character)
   annoData[is.na(annoData)] <- NaN
