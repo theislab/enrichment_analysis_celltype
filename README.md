@@ -14,7 +14,7 @@ The **enrich** function takes as input 5 parameters:
 - clusters - path of the file from which the cluster information are to be read in. The cluster dataset should be a csv file with genes along rows and columns corresponding to adjusted p value, log fold change (or average difference) and cluster ID respectively. An example file can be loaded from the data folder.
 - pval - adjusted p value threshold to select significant gene memberships for clusters
 - lfc - log fold change threshold to select significant gene memberships for clusters
-- annoDB - annotation database to be used for cell-type signatures. One of 'xCell' or 'brain_anatomy' can be selected. 'xCell' enumerates 64 immune and stromal cell-types using a novel gene-signature based method. 'brain_anatomy', on the other hand, applies a correlation-based metric called differential stability to identify 21 significant gene expression signatures representing distinct anatomical regions of the brain (default = 'xCELL').
+- annoDB - annotation database to be used for cell-type signatures. One of 'xCell' or 'brain_anatomy' can be selected. 'xCell' enumerates 64 immune and stromal cell-types using a novel gene-signature based method. 'brain_anatomy', on the other hand, applies a correlation-based metric called differential stability to identify 21 significant gene expression signatures representing distinct anatomical regions of the brain (default = 'xCell').
 - plot - a logical value indicating whether to plot the top 3 cluster cell-types as a barplot (default = TRUE)
 
 ### Usage of the enrich function
