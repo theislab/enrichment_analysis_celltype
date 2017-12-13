@@ -10,7 +10,7 @@ make_adjacency_matrix <- function(file){
   load(file = './enrichment_analysis_celltype/data/adj_mat.RData')
   
   # updating the adjacency matrix with brain anatomy related annotations
-  brain_anno_anatomical <- as.matrix(read.csv("E:/cell-type enrichment analysis/nn.4171-S13.csv", 
+  brain_anno_anatomical <- as.matrix(read.csv("./enrichment_analysis_celltype/data/nn.4171-S13.csv", 
                                     header = TRUE, row.names = 1))
   
   dim(adj.mat) # 5079X489
