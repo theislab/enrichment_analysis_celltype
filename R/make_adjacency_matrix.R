@@ -7,7 +7,7 @@ make_adjacency_matrix <- function(file){
   
   # setwd('C:/Users/user/')
   
-  load(file = './enrich/data/adj_mat.RData')
+  load(file = './enrichment_analysis_celltype/data/adj_mat.RData')
   
   # updating the adjacency matrix with brain anatomy related annotations
   brain_anno_anatomical <- as.matrix(read.csv("E:/cell-type enrichment analysis/nn.4171-S13.csv", 
@@ -32,8 +32,8 @@ make_adjacency_matrix <- function(file){
   
   dim(adj.mat) # 5927X510
   
-  write.csv(adj.mat,file = 'E:/cell-type enrichment analysis/adjacency matrix with xCell and brain annotations.csv')
-  save(adj.mat,file = 'E:/cell-type enrichment analysis/adj_matv2.RData')
+  write.csv(adj.mat,file = './enrichment_analysis_celltype/data/adjacency matrix with xCell and brain annotations.csv')
+  save(adj.mat,file = './enrichment_analysis_celltype/data/adj_matv2.RData')
   
   # constructing the first adjacency matrix with xCell
   # file contains the path for the cell-type annotations for excel

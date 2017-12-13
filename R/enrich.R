@@ -12,7 +12,7 @@ enrich <- function(clusters,
   cat('Loading cell type signatures annotation file \n')
   # After cloning the git repository it should be saved in the working directory
   # load(file = './enrich/data/adj_mat.RData')
-  load(file = 'E:/cell-type enrichment analysis/adj_matv2.RData')
+  load(file = './enrichment_analysis_celltype/data/adj_matv2.RData')
   
   if (annoDB == "xCell") {
     adj.mat <- adj.mat[,c(1:489)]
