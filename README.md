@@ -26,3 +26,10 @@ The **enrich** function will display a barplot (if plot = TRUE) of the top 3 sig
 - significant_fisher - top 3 significantly enriched results from the Fisher's test also used for making the barplot
 
 ### Example
+
+After cloning the github repository, it must be saved in the current working directory of R from where both the **enrich** function and the adjacency matrix can be loaded into the R session. The function can then be called as:
+```
+# path of the file from which the cluster information are to be read in
+# An example can be found in the data folder
+res_enrich <- enrich(clusters = clusters)
+```
